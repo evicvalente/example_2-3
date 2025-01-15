@@ -133,30 +133,35 @@ void uartTask()
         case '4':
             uartUsb.write( "Please enter the code.\r\n", 24 );
             uartUsb.write( "Type 1 for button pressed\r\n", 27 );
-            uartUsb.write( "Type 0 for button not pressed\r\n", 31 );
-            uartUsb.write( "Enter the value for 'A' Button\r\n", 32 );
-            uartUsb.read( &receivedAButton, 1 );
-            uartUsb.write( "Enter the value for 'B' Button\r\n", 32 );
-            uartUsb.read( &receivedBButton, 1 );
-            uartUsb.write( "Enter the value for 'C' Button\r\n", 32 );
-            uartUsb.read( &receivedCButton, 1 );
-            uartUsb.write("Enter the value for 'D' Button\r\n\r\n", 34 );
+            uartUsb.write( "Type 0 for button not pressed\r\n\r\n", 32 );
+
+            // Prompt for D first
+            uartUsb.write( "Enter the value for 'D' Button\r\n", 32 );
             uartUsb.read( &receivedDButton, 1 );
 
-            if ( (receivedAButton == '1') && 
-                 (receivedBButton == '1') && 
-                 (receivedCButton == '0') &&
-                 (receivedDButton == '0') ) {
-                uartUsb.write( "\r\nThe code is correct\r\n\r\n", 25 );
+            // Now prompt for A
+            uartUsb.write( "\r\nEnter the value for 'A' Button\r\n", 36 );
+            uartUsb.read( &receivedAButton, 1 );
+
+            // Finally prompt for C
+            uartUsb.write( "\r\nEnter the value for 'C' Button\r\n\r\n", 38 );
+            uartUsb.read( &receivedCButton, 1 );
+
+            // Check if (D=1, A=1, C=0)
+            if ( (receivedDButton == '1') &&
+                (receivedAButton == '1') &&
+                (receivedCButton == '0') ) {
+                uartUsb.write( "\r\nThe code is correct\r\n\r\n", 27 );
                 alarmState = OFF;
                 incorrectCodeLed = OFF;
                 numberOfIncorrectCodes = 0;
             } else {
-                uartUsb.write( "\r\nThe code is incorrect\r\n\r\n", 27 );
+                uartUsb.write( "\r\nThe code is incorrect\r\n\r\n", 29 );
                 incorrectCodeLed = ON;
-                numberOfIncorrectCodes = numberOfIncorrectCodes + 1;
-            }                
+                numberOfIncorrectCodes++;
+            }
             break;
+
 
         default:
             availableCommands();
